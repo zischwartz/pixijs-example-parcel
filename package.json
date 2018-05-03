@@ -12,6 +12,6 @@
   "scripts": {
     "start": "parcel src/index.html",
     "build": "parcel build --public-url=./ src/index.html",
-    "deploy-gh-pages": "yarn build && gh-pages -d dist"
+    "deploy-gh-pages": "npm run build && gh-pages -d dist"
   }
 }
