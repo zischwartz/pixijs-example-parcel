@@ -63,7 +63,9 @@ function setup() {
     // app.screen.height
     app.screen.height + 100
   );
-  tilingSprite.scale.x = 1.5;
+  tilingSprite.x = -400;
+  tilingSprite.scale.x = 3;
+  tilingSprite.anchor.x = 0.5;
   // tilingSprite.y = 300;
   // tilingSprite.scale.y = 1.5;
   // tilingSprite.addChild(pole);
@@ -208,6 +210,8 @@ function gameLoop(delta) {
   tilingSprite.tilePosition.y -= fran_movement;
   tilingSprite.tilePosition.y += 1;
 
+  // container.rotation += fran.vx / 500;
+
   pole.y += 1 - fran_movement;
 
   if (pole.y > 1200) {
@@ -229,9 +233,16 @@ function gameLoop(delta) {
     guy.rotation = r > 0.5 ? -0.3 : 0.3;
   }
 
-  if (hitTestRectangle(fran, carrot) && carrot.visible) {
-    carrot.visible = false;
-    clink_sound.play();
+  if (hitTestRectangle(fran, carrot)) {
+    if (carrot.visible) {
+      carrot.visible = false;
+      console.log("hit");
+      // clink_sound.play();
+    }
+    fran.tint = 0xffa500;
+  } else {
+    // console.log(fran.tint);
+    fran.tint = 16777215;
   }
 
   // fran.x += 1;
