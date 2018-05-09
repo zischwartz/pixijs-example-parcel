@@ -12,6 +12,7 @@ import fran_2_image_path from "../images/fran_2.png";
 import fran_3_image_path from "../images/fran_3.png";
 import line_image_path from "../images/line.png";
 import carrot_image_path from "../images/carrot.png";
+import pole_image_path from "../images/pole.png";
 
 import clink_sound_path from "../audio/glass_clink.mp3";
 
@@ -34,7 +35,7 @@ let guy;
 let fran;
 let tilingSprite;
 let carrot;
-
+let pole;
 // cheap hack for hmr
 if (!PIXI.loader.resources[guy_image_path]) {
   PIXI.loader
@@ -46,7 +47,8 @@ if (!PIXI.loader.resources[guy_image_path]) {
       carrot_image_path,
       fran_1_image_path,
       fran_2_image_path,
-      fran_3_image_path
+      fran_3_image_path,
+      pole_image_path
     ])
     .load(setup);
 } else {
@@ -64,12 +66,13 @@ function setup() {
   tilingSprite.scale.x = 1.5;
   // tilingSprite.y = 300;
   // tilingSprite.scale.y = 1.5;
+  // tilingSprite.addChild(pole);
   container.addChild(tilingSprite);
 
   // console.log(container);
   guy = new PIXI.Sprite(PIXI.loader.resources[guy_image_path].texture);
   carrot = new PIXI.Sprite(PIXI.loader.resources[carrot_image_path].texture);
-
+  pole = new PIXI.Sprite(PIXI.loader.resources[pole_image_path].texture);
   // fran = new PIXI.Sprite(PIXI.loader.resources[fran_image_path].texture);
   let textures = [
     PIXI.loader.resources[fran_1_image_path].texture,
@@ -79,6 +82,7 @@ function setup() {
 
   fran = new PIXI.extras.AnimatedSprite(textures);
   container.addChild(carrot);
+  container.addChild(pole);
   container.addChild(guy);
   container.addChild(fran);
 
@@ -104,6 +108,13 @@ function setup() {
   // guy.scale.x = 0.5;
   // guy.scale.y = 0.5;
 
+  pole.anchor.set(0.5);
+  pole.scale.x = 0.5;
+  pole.scale.y = 0.75;
+  pole.x = 750;
+  pole.y = -250;
+  pole.rotation = 0.1;
+
   //Capture the keyboard arrow keys
   let left = keyboard(37),
     up = keyboard(38),
@@ -124,7 +135,7 @@ function setup() {
   };
   down.press = () => {
     fran.vy = 1;
-    // fran.animationSpeed = 0.3;
+    fran.animationSpeed = 0;
   };
 
   left.release = () => {
@@ -157,7 +168,7 @@ function setup() {
   container.filters = [displacementFilter, color_filter];
 
   let warp_scale = 700;
-  // let warp_scale =1;
+  // let warp_scale = 1;
 
   // this one sets the intensity of the effect, not the size
   displacementFilter.scale.x = warp_scale;
@@ -189,12 +200,22 @@ function setup() {
 
 function gameLoop(delta) {
   // guy.y += 1;
-  guy.y += 2;
-  carrot.y += 1;
+  let fran_movement = Math.min(0, fran.vy) * 2;
+  guy.y += 2 - fran_movement;
+  carrot.y += 1 - fran_movement;
   fran.x += fran.vx;
   fran.y += fran.vy;
-  tilingSprite.tilePosition.y -= Math.min(0, fran.vy) * 2;
+  tilingSprite.tilePosition.y -= fran_movement;
   tilingSprite.tilePosition.y += 1;
+
+  pole.y += 1 - fran_movement;
+
+  if (pole.y > 1200) {
+    pole.y = -150;
+    let r = Math.random();
+    pole.x = r > 0.5 ? r * 200 : app.screen.width - r * 200;
+    pole.rotation = r > 0.5 ? -0.1 : 0.1;
+  }
   if (carrot.y > 800) {
     carrot.y = 0;
     carrot.x = Math.random() * app.screen.width;
