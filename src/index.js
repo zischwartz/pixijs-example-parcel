@@ -220,6 +220,7 @@ function gameLoop(delta) {
     carrot.y = 0;
     carrot.x = Math.random() * app.screen.width;
     carrot.rotation = Math.random() > 0.5 ? 0 : 3.14;
+    carrot.visible = true;
   }
   if (guy.y > 2000) {
     guy.y = -200;
@@ -228,11 +229,16 @@ function gameLoop(delta) {
     guy.rotation = r > 0.5 ? -0.3 : 0.3;
   }
 
+  if (hitTestRectangle(fran, carrot) && carrot.visible) {
+    carrot.visible = false;
+    clink_sound.play();
+  }
+
   // fran.x += 1;
 }
 
-// var sound = new Howl({
-//   src: [clink_sound_path]
-// });
+var clink_sound = new Howl({
+  src: [clink_sound_path]
+});
 
 // sound.play();
