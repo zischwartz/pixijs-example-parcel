@@ -18,13 +18,20 @@ import clink_sound_path from "../audio/glass_clink.mp3";
 
 // console.log(guy_image_path);
 
-let app = new PIXI.Application({ width: 800, height: 700 });
+let app = new PIXI.Application({ width: 900, height: 700 });
 
 // just for hmr
 document.body.innerHTML = "";
 
 //Add the canvas that Pixi automatically created for you to the HTML document
 document.body.appendChild(app.view);
+
+let renderer = app.renderer;
+
+renderer.view.style.position = "absolute";
+renderer.view.style.display = "block";
+renderer.view.style.width = window.innerWidth + "px";
+renderer.view.style.height = window.innerHeight + "px";
 
 app.renderer.backgroundColor = 0xffffff;
 let container = new PIXI.Container();
@@ -155,7 +162,7 @@ function setup() {
   up.release = down.release;
 
   // add the warp effect, comment out to disable
-  // add_filters(container);
+  add_filters(container);
 
   app.ticker.add(delta => gameLoop(delta));
 }
