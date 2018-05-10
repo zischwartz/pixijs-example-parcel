@@ -36,21 +36,22 @@ let fran;
 let tilingSprite;
 let carrot;
 let pole;
+
+let image_paths = [
+  guy_image_path,
+  displace_path,
+  fran_image_path,
+  line_image_path,
+  carrot_image_path,
+  fran_1_image_path,
+  fran_2_image_path,
+  fran_3_image_path,
+  pole_image_path
+];
+
 // cheap hack for hmr
 if (!PIXI.loader.resources[guy_image_path]) {
-  PIXI.loader
-    .add([
-      guy_image_path,
-      displace_path,
-      fran_image_path,
-      line_image_path,
-      carrot_image_path,
-      fran_1_image_path,
-      fran_2_image_path,
-      fran_3_image_path,
-      pole_image_path
-    ])
-    .load(setup);
+  PIXI.loader.add(image_paths).load(setup);
 } else {
   setup();
   // console.log("!");
@@ -153,21 +154,24 @@ function setup() {
   };
   up.release = down.release;
 
+  // add the warp effect, comment out to disable
+  // add_filters(container);
+
+  app.ticker.add(delta => gameLoop(delta));
+}
+
+function add_filters(base) {
   var displacementSprite = PIXI.Sprite.fromImage(displace_path);
   var displacementFilter = new PIXI.filters.DisplacementFilter(
     displacementSprite
   );
 
-  // let fake_dp = PIXI.Sprite.fromImage(displace_path);
-
-  // app.stage.addChild(fake_dp);
-  app.stage.addChild(displacementSprite);
+  base.addChild(displacementSprite);
+  // app.stage.addChild(displacementSprite);
 
   let color_filter = new PIXI.filters.ColorMatrixFilter();
-  // color_filter.technicolor(true);
   // color_filter.lsd(true);
-  // color_filter.night(true);
-  container.filters = [displacementFilter, color_filter];
+  base.filters = [displacementFilter, color_filter];
 
   let warp_scale = 700;
   // let warp_scale = 1;
@@ -182,22 +186,6 @@ function setup() {
   // this one effects the size (but also the intensity, as it's over a larger area)
   displacementSprite.scale.x = 2.5;
   displacementSprite.scale.y = 2.5;
-  // displacementSprite.scale.x = 8;
-  // displacementSprite.scale.y = 8;
-
-  // fake_dp.scale.x = warp_scale;
-  // fake_dp.scale.y = warp_scale;
-  // fake_dp.anchor.set(0.5);
-  // fake_dp.x = 400;
-  // fake_dp.y = 650;
-
-  // displacementSprite.scale.x = 2;
-  // displacementSprite.scale.y = 2;
-  // displacementSprite.scale.x = 0.5;
-  // displacementSprite.scale.y = 0.5;
-  // console.log(displacementSprite);
-
-  app.ticker.add(delta => gameLoop(delta));
 }
 
 function gameLoop(delta) {
@@ -210,6 +198,7 @@ function gameLoop(delta) {
   tilingSprite.tilePosition.y -= fran_movement;
   tilingSprite.tilePosition.y += 1;
 
+  // this makes it even crazier, rotate everything
   // container.rotation += fran.vx / 500;
 
   pole.y += 1 - fran_movement;
